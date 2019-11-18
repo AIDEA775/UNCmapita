@@ -9,8 +9,8 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        mapbox:mapbox_cameraTargetLat="38.89770"
-        mapbox:mapbox_cameraTargetLng="-77.03655"
+        mapbox:mapbox_cameraTargetLat="-31.43817"
+        mapbox:mapbox_cameraTargetLng="-64.19354"
         mapbox:mapbox_cameraZoom="18"/>
 
     <LinearLayout
@@ -23,7 +23,7 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/second_level_button"
+            android:id="@+id/level2"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
@@ -31,11 +31,19 @@
             android:textColor="#ffffff"/>
 
         <Button
-            android:id="@+id/ground_level_button"
+            android:id="@+id/level1"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
-            android:text="G"
+            android:text="1"
+            android:textColor="#ffffff"/>
+
+        <Button
+            android:id="@+id/level0"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="0"
             android:textColor="#ffffff"/>
 
     </LinearLayout>

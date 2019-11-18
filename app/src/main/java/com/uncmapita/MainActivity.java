@@ -1,33 +1,40 @@
 package com.uncmapita;
 
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 
-import com.mapbox.geojson.Point;
-import com.mapbox.geojson.Polygon;
+import com.google.gson.JsonElement;
+import com.mapbox.geojson.Feature;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.expressions.Expression;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.turf.TurfJoins;
+//import com.mapbox.turf.TurfJoins;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.interpolate;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.stop;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.zoom;
@@ -40,11 +47,10 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 /**
  * Display an indoor map of a building with toggles to switch between floor levels
  */
-public class IndoorMapActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private GeoJsonSource indoorBuildingSource;
 
-    private List<List<Point>> boundingBoxList;
     private View levelButtons;
     private MapView mapView;
 
@@ -54,12 +60,15 @@ public class IndoorMapActivity extends AppCompatActivity {
 
         // Mapbox access token is configured here. This needs to be called either in your application
         // object or in the same activity which contains the mapview.
-        Mapbox.getInstance(this, "pk.eyJ1IjoiYWlkZWE3NzUiLCJhIjoiY2prZXFtb242MDBuaTNxcW9pbXBxd283ZSJ9.d1p1AakV7ofJCMzD563SmA");
+        Mapbox.getInstance(this,
+                "pk.eyJ1IjoiYWlkZWE3NzUiLCJhIjoiY2prZXFtb242MDBuaTNxcW9pbXBxd283ZSJ9.d1p1AakV7ofJCMzD563SmA");
 
         setContentView(R.layout.activity_main);
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
         mapView.getMapAsync(new OnMapReadyCallback() {
+
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
@@ -81,6 +90,7 @@ public class IndoorMapActivity extends AppCompatActivity {
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
+
             @Override
             public void onMapReady(@NonNull final MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
@@ -88,37 +98,18 @@ public class IndoorMapActivity extends AppCompatActivity {
                     public void onStyleLoaded(@NonNull Style style) {
                         levelButtons = findViewById(R.id.floor_level_buttons);
 
-                        final List<Point> boundingBox = new ArrayList<>();
-
-                        boundingBox.add(Point.fromLngLat(-77.03791, 38.89715));
-                        boundingBox.add(Point.fromLngLat(-77.03791, 38.89811));
-                        boundingBox.add(Point.fromLngLat(-77.03532, 38.89811));
-                        boundingBox.add(Point.fromLngLat(-77.03532, 38.89708));
-
-                        boundingBoxList = new ArrayList<>();
-                        boundingBoxList.add(boundingBox);
-
                         mapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
                             @Override
                             public void onCameraMove() {
                                 if (mapboxMap.getCameraPosition().zoom > 16) {
-                                    if (TurfJoins.inside(Point.fromLngLat(mapboxMap.getCameraPosition().target.getLongitude(),
-                                            mapboxMap.getCameraPosition().target.getLatitude()), Polygon.fromLngLats(boundingBoxList))) {
-                                        if (levelButtons.getVisibility() != View.VISIBLE) {
-                                            showLevelButton();
-                                        }
-                                    } else {
-                                        if (levelButtons.getVisibility() == View.VISIBLE) {
-                                            hideLevelButton();
-                                        }
-                                    }
+                                    showLevelButton();
                                 } else if (levelButtons.getVisibility() == View.VISIBLE) {
                                     hideLevelButton();
                                 }
                             }
                         });
                         indoorBuildingSource = new GeoJsonSource(
-                                "indoor-building", loadJsonFromAsset("white_house_lvl_0.geojson"));
+                                "indoor-building", loadJsonFromAsset("data.geojson"));
                         style.addSource(indoorBuildingSource);
 
                         // Add the building layers since we know zoom levels in range
@@ -126,19 +117,29 @@ public class IndoorMapActivity extends AppCompatActivity {
                     }
                 });
 
-                Button buttonSecondLevel = findViewById(R.id.second_level_button);
-                buttonSecondLevel.setOnClickListener(new View.OnClickListener() {
+                Button level0 = findViewById(R.id.level0);
+                level0.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        indoorBuildingSource.setGeoJson(loadJsonFromAsset("white_house_lvl_1.geojson"));
+                        indoorBuildingSource.setGeoJson(loadJsonFromAsset("famaf0.geojson"));
                     }
                 });
 
-                Button buttonGroundLevel = findViewById(R.id.ground_level_button);
-                buttonGroundLevel.setOnClickListener(new View.OnClickListener() {
+                Button level1 = findViewById(R.id.level1);
+                level1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        indoorBuildingSource.setGeoJson(loadJsonFromAsset("white_house_lvl_0.geojson"));
+                        indoorBuildingSource.setGeoJson(loadJsonFromAsset("famaf1.geojson"));
+                    }
+                });
+
+                Button level2 = findViewById(R.id.level2);
+                level2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                        indoorBuildingSource.setGeoJson(loadJsonFromAsset("famaf2.geojson"));
+                        List<Feature> list = indoorBuildingSource.querySourceFeatures(eq(get("name"), "Oficina 101"));
+                        Log.e("arst", list.toString());
                     }
                 });
             }
@@ -182,7 +183,7 @@ public class IndoorMapActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
