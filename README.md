@@ -27,9 +27,9 @@ https://www.openstreetmap.org/export#map=19/-31.43791/-64.19329&layers=ND
 1. Transformar .osm a .geojson usando osmium:
 https://osmcode.org/osmium-tool/
 
-```bash
-$ osmium export -o data.geojson map.osm
-```
+   ```bash
+   $ osmium export -o data.geojson map.osm
+   ```
 
 1. Levantar el .geojson usando mapbox.
 
