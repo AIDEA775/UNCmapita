@@ -1,5 +1,7 @@
 # UNCmapita
 
+[![Join the chat at https://gitter.im/UNCmapita/community](https://badges.gitter.im/UNCmapita/community.svg)](https://gitter.im/UNCmapita/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Mapeando el campus universitario de la Universidad Nacional de Córdoba, Argentina (UNC).
 
 ## Updates! Leer abajo
