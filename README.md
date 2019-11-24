@@ -149,3 +149,11 @@ lo que nos lleva a pensar en usar efectivamente Mapbox (para darle el estilo de 
    Porque ya que vamos a hacer un esfuerzo, OSM va a permitir que otros proyectos aprovechen de los datos que generemos
    con garantía de libertad y en un formato estándar. Y además, nos aprovechamos de sus herramientas de mapeo.
    
+
+# Participar
+
+Si tenes ganas de colaborar suscribite a esta lista de emails:
+https://groups.google.com/d/forum/uncmapita.
+
+Y también unite al Gitter:
+https://gitter.im/UNCmapita/community
