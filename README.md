@@ -8,11 +8,11 @@ Mapeando el campus universitario de la Universidad Nacional de Córdoba, Argenti
 
 ## Este repo
 
-Usamos OpenStreetMap (OSM), por sus principios.
+Usamos OpenStreetMap (OSM), por sus principios y libertades.
 
 Usamos MapBox para mostrar mapas de OSM.
 
-MapBox tiene una libreria para Android que usa OpenGL que logra una experiencia muy fluida.
+MapBox tiene librerias para Android y Web que usan OpenGL y logran una experiencia muy fluida.
 
 La unica forma que encontré hasta ahora de sobreponer informacion en mapbox es con un geojson.
 
@@ -36,12 +36,15 @@ https://osmcode.org/osmium-tool/
 
 1. Levantar el .geojson usando mapbox.
 
-1. Si hay que buscar algo, un aula por ejemplo, los datos están en el geojson.
+1. Si hay que buscar algo, un aula por ejemplo, los datos ya están en el geojson.
+
+1. Si queremos la oficina de un docente, usar un servidor aparte.
 
 
 ## OpenStreetMap
 
-OSM es una colección de etiquetas (Features).
+OSM es una colección de etiquetas XML (Features) que describen cosas que hay en el mundo real.
+
 Hubo varias propuestas sobre como taggear el interior de los edificios, pero
 [esta](https://wiki.openstreetmap.org/wiki/Simple_Indoor_Tagging)
 parece ser la que finalmente va a convertirse en el estandar.
@@ -52,7 +55,7 @@ https://openlevelup.net/?l=0#17/-31.43676/-64.19073
 Para editar mapas internos en la web (iD):
 https://projets.pavie.info/id-indoor/#background=MAPNIK&level=0&map=21.52/-64.19329/-31.43814
 
-Para editar mapas internos no en la web (JOSM):
+Para editar mapas internos NO en la web (JOSM):
 https://josm.openstreetmap.de/
 
 Hay bastantes mapas indoor:
@@ -63,9 +66,6 @@ https://taginfo.openstreetmap.org/keys/indoor#map
 
 OSMAND es una app y hay un issue donde discuten soportar mapas indoor:
 https://github.com/osmandapp/Osmand/issues/3559
-
-Un hilo de Reddit donde hablan un poco de la comunidad y la Fundación OSM:
-https://www.reddit.com/r/openstreetmap/comments/825x8s/indoor_editors/
 
 Routing en indoor, pero no es prioritario:
 https://help.openstreetmap.org/questions/9984/is-there-an-osm-indoor-routing-engineapi-for-android
@@ -114,12 +114,12 @@ desde [acá (link al mapa)](https://mc.bbbike.org/mc/?lon=-64.193252&lat=-31.438
       ![foto satelital](https://wayback.maptiles.arcgis.com/arcgis/rest/services/world_imagery/mapserver/tile/3201/19/310416/168655)
 
 1. Meter todo en [GIMP](https://www.gimp.org/), y con mucha paciencia rearmar el mapa con los tiles y alinearlos.
-(no voy a escribir como hice porque seguro hay una mejor forma, pero lo subí [acá](https://blog.aidea775.com/map/out.xcf)).
+(no voy a escribir como hice porque seguro hay una mejor forma, pero subí un ejemplo [acá](https://blog.aidea775.com/map/out.xcf)).
 
 1. Con los nuevos tiles listos, ir a 
-https://projets.pavie.info/id-indoor/level=0&map=19/-64.19320/-31.43809
+https://projets.pavie.info/id-indoor/#background=Bing&level=0&map=19.37/-64.19322/-31.43811
 
-1. Cambiar el mapa de fondo por uno personalizado:
+1. Cambiar el mapa de fondo por uno [personalizado](https://projets.pavie.info/id-indoor/#background=custom:https://blog.aidea775.com/map/out/{zoom}_{y}_{x}.png&level=0&map=19.37/-64.19322/-31.43811):
 
    * Yo usé un server local, así que puse: http://localhost:1313/map/out/{zoom}_{y}_{x}.png
 
@@ -127,9 +127,12 @@ https://projets.pavie.info/id-indoor/level=0&map=19/-64.19320/-31.43809
 
 1. Si no está alineado, pueden corregirlo con las opciones que salen mas abajo.
 
-1. Y a mapear!
+1. Estoy dudando de la fotos satelitales, se me hacen que también están desalineadas,
+y los edificios no están tomados exactamente desde arriba, por lo que marcar el techo tampoco vale.
 
-1. No wait! Hay que leer un poco sobre los tags, como mapear los pasillos y las puertas:
+1. A mapear!
+
+1. No! Pará! Hay que leer un poco sobre los tags, como mapear los pasillos y las puertas:
 https://wiki.openstreetmap.org/wiki/Simple_Indoor_Tagging
 
 ## Otras ideas
@@ -137,9 +140,9 @@ https://wiki.openstreetmap.org/wiki/Simple_Indoor_Tagging
 * Una vez mapeada a CU, creemos que NO es común que los edificios cambien,
 por lo que una app con un archivo estatico (el geojson) no suena a tan mala idea.
 
-   Pero, no está bueno poner en OSM datos como los nombres de los docentes y sus oficinas (y que sea indexable por Google).
+   Pero, no está bueno poner en OSM datos como los nombres de los docentes y sus oficinas (y que sea indexable).
    Por lo que a esos datos podríamos meterlo en un servidor aparte, donde poder hacer consultas,
-   y ¿contener más info que no cuadra en OSM?.
+   y ¿contener más info que no cuadra en OSM? ¿como cuales?.
 
 * Lo groso sería tener el mapa en la web de la UNC: https://www.unc.edu.ar/
 lo que nos lleva a pensar en usar efectivamente Mapbox (para darle el estilo de la UNC) y geojson.
